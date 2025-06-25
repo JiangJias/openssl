@@ -897,12 +897,14 @@ int main(int argc, char *argv[])
     while (!BIO_eof(req_bio)) {
         if (!BIO_read_ex(req_bio, &reqnames[read_offset], REQ_STRING_SZ, &bytes_read)) {
             fprintf(stderr, "Failed to read some data from request file\n");
+            BIO_free(req_bio);
             goto end;
         }
         read_offset += bytes_read;
         reqnames = OPENSSL_realloc(reqnames, read_offset + REQ_STRING_SZ);
         if (reqnames == NULL) {
             fprintf(stderr, "Realloc failure\n");
+            BIO_free(req_bio);
             goto end;
         }
     }
